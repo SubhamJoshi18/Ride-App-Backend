@@ -20,7 +20,7 @@ async function verifyAuthAccessToken(
   let token: string | undefined;
   try {
     token = req.headers['authorization'] ?? req.headers.authorization;
-
+    token = token?.startsWith('Bearer ') ? token.split(' ')[1] : token;
     if (!token) {
       throw new ValidationException(
         HTTP_STATUS.VALIDATION_ERROR.CODE,
