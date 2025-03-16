@@ -10,7 +10,8 @@ import { phone } from 'phone';
 import authLogger from '../libs/logger.libs';
 import { comparePassword, hashPassword } from '../helpers/bcrypt.helper';
 import {
-  createTokenAuthPayload,
+  createRefreshTokenAuthPayload,
+  createAccessTokenAuthPayload,
   prepareAuthPayload,
   prepareUserProfilePayload,
 } from '../mappers/auth.mapper';
@@ -114,16 +115,24 @@ async function loginService(payload: LoginType) {
 
   const fetchUserProfile = await innerJoinUserProfile(userId);
 
-  const mergePayloadAndRetrieveToken = await createTokenAuthPayload(
+  const mergePayloadAndRetrieveAccessToken = await createAccessTokenAuthPayload(
     isMatchPhoneNumber,
     fetchUserProfile?.userProfile as UserProfile,
   );
 
-  const { accessToken } = mergePayloadAndRetrieveToken;
+  const mergePayloadAndRetrieveRefreshToken =
+    await createRefreshTokenAuthPayload(
+      isMatchPhoneNumber,
+      fetchUserProfile?.userProfile as UserProfile,
+    );
+
+  const { accessToken } = mergePayloadAndRetrieveAccessToken;
+  const { refreshToken } = mergePayloadAndRetrieveRefreshToken;
 
   return {
     content: {
       accessToken,
+      refreshToken,
       lastLoggedIn: new Date().toDateString(),
     },
   };
