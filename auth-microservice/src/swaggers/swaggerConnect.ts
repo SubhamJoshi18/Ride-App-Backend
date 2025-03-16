@@ -12,7 +12,7 @@ function swaggerDocs(app: Application, port: number) {
     res.send(swaggerSpec);
   });
 
-  console.log(swaggerSpec);
+  console.log(swaggerSpec)
   authLogger.info(`Docs Available at http://localhost:${port}/docs`);
 }
 

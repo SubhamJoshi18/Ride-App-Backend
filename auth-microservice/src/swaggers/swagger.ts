@@ -1,5 +1,4 @@
 import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
 import { version } from '../../package.json';
 
 const options: swaggerJSDoc.Options = {
@@ -10,7 +9,7 @@ const options: swaggerJSDoc.Options = {
       version,
     },
     components: {
-      securitySchemas: {
+      securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
@@ -20,12 +19,12 @@ const options: swaggerJSDoc.Options = {
     },
     security: [
       {
-        bearerauth: [],
+        bearerAuth: [],
       },
     ],
   },
 
-  apis: ['../routers/*.ts', './schema/*.ts'],
+  apis: ['./src/routers/*.ts'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
