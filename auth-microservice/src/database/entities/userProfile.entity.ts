@@ -20,7 +20,7 @@ export class UserProfile extends BaseEntity {
     nullable: false,
     length: 255,
   })
-  username!: string;
+  uniqueName!: string;
 
   @Column({
     type: 'varchar',

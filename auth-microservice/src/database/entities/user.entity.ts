@@ -40,6 +40,12 @@ export class Users extends BaseEntity {
   password!: string;
 
   @Column({
+    type: 'text',
+    nullable: false,
+  })
+  countryISO!: string;
+
+  @Column({
     type: 'simple-enum',
     enum: [USER_ROLE, RIDER_ROLE],
     default: USER_ROLE,

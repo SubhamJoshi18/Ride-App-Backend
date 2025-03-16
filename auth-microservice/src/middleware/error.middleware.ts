@@ -12,6 +12,8 @@ export const errorHandler = (
   if (error instanceof HttpExceptions) {
     return res.status(error.getStatusCode()).json({
       message: error.getMessage(),
+      error: true,
+      statusCode: error.getStatusCode(),
     });
   }
 
@@ -19,5 +21,7 @@ export const errorHandler = (
 
   return res.status(statusCode.INTERNAL_SERVER_ERROR).json({
     message: 'Unhandle Error Found: ' + error?.message,
+    error: true,
+    statusCode: statusCode.INTERNAL_SERVER_ERROR,
   });
 };
