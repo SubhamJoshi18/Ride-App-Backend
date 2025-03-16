@@ -38,4 +38,16 @@ async function createRefreshToken(payload: ITokenPayload) {
   });
 }
 
-export { createAccessToken, createRefreshToken };
+async function verifyAccessToken(token: string) {
+  const secretKey = getEnvValue('SECRET_ACCESS_TOKEN') as string;
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, secretKey, (err, decodedToken) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(decodedToken);
+    });
+  });
+}
+
+export { createAccessToken, createRefreshToken, verifyAccessToken };
