@@ -11,6 +11,7 @@ class SingletonDatabaseConnection {
       const databaseSource = new DataSource(
         getDatabaseConfig() as DataSourceOptions,
       );
+      await databaseSource.initialize();
       return databaseSource;
     } catch (err) {
       authLogger.error(
