@@ -4,13 +4,13 @@ import { Request, Response } from 'express';
 
 function handleUnexpectedError(): void {
   process.on('uncaughtException', function (err) {
-    // Handle the error safely
+
     console.log(
-      '****** Unhandled exception in etl-pim-consumer code ******',
+      '****** Unhandled exception in ride-app-backend code ******',
       err,
     );
     authLogger.error(
-      `****** Unhandled exception in etl-pim-consumer code ****** ${err.message}`,
+      `****** Unhandled exception in ride-app-backend code ****** ${err.message}`,
     );
     process.exit(1);
   });
@@ -24,14 +24,14 @@ function handleUnexpectedError(): void {
   });
 
   process.on('SIGTERM', (signal) => {
-    const message = `****** etl-pim-consumer Process ${process.pid} received a SIGTERM signal - ${signal}`;
+    const message = `****** ride-app-backend Process ${process.pid} received a SIGTERM signal - ${signal}`;
     console.log(message);
     authLogger.error(message);
     process.exit(0);
   });
 
   process.on('SIGINT', (signal) => {
-    const message = `****** etl-pim-consumer Process ${process.pid} received a SIGINT signal - ${signal}`;
+    const message = `****** ride-app-backend Process ${process.pid} received a SIGINT signal - ${signal}`;
     console.log(message);
     authLogger.error(message);
     process.exit(0);

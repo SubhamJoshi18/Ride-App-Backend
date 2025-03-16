@@ -19,6 +19,7 @@ async function startMicroservice(retries = 0) {
     );
 
     handleUnexpectedError();
+
     await authMicroserviceInstance.listenServer();
 
     authLogger.info(`Authentication microservice started on port ${port}`);
