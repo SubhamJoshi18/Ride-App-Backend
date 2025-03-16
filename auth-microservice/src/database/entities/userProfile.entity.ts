@@ -5,11 +5,12 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
+  BaseEntity,
 } from 'typeorm';
 import { Users } from './user.entity';
 
 @Entity('UserProfiles')
-export class UserProfile {
+export class UserProfile extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -34,19 +35,6 @@ export class UserProfile {
   })
   profilePicture!: string;
 
-  @Column({
-    type: 'json',
-    nullable: true,
-    default: () => "'{}'",
-  })
-  location:
-    | {
-        country: string;
-        city: string;
-        postalCode: number;
-      }
-    | undefined;
-
   @OneToOne(() => Users, (user) => user.userProfile, {
     nullable: false,
     eager: true,
@@ -55,22 +43,19 @@ export class UserProfile {
   user!: Users;
 
   @Column({
-    type: 'boolean',
+    type: 'bool',
     default: true,
   })
   isActive!: boolean;
 
   @Column({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
     nullable: false,
   })
   createdAt!: Date;
 
   @Column({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
     nullable: false,
   })
   updatedAt!: Date;

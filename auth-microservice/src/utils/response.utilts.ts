@@ -1,3 +1,4 @@
+import statusCode from 'http-status-codes';
 import { Response } from 'express';
 import { HTTP_STATUS } from '../constants/http-status.constant';
 
@@ -16,7 +17,7 @@ function sendErrorResponse<T>(
 }
 
 function sendSuccessResponse<T>(res: Response, data: T, message: string) {
-  return res.status(HTTP_STATUS.VALIDATION_ERROR.CODE).json({
+  return res.status(statusCode.ACCEPTED).json({
     message: message,
     error: false,
     data: data,

@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
+  BaseEntity,
 } from 'typeorm';
 import { RIDER_ROLE, USER_ROLE } from '../../constants/roles.constant';
 import { UserProfile } from './userProfile.entity';
@@ -12,7 +13,7 @@ import { UserProfile } from './userProfile.entity';
 @Entity({
   name: 'Users',
 })
-export class Users {
+export class Users extends BaseEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
   })
@@ -47,14 +48,12 @@ export class Users {
 
   @CreateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    nullable: false,
   })
   createdAt!: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt!: Date;
 
