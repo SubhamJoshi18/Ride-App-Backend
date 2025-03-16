@@ -43,4 +43,4 @@ function handleAPIPrefix(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export { verifyAccessToken, handleAPIPrefix };
+export { verifyAuthAccessToken, handleAPIPrefix };
