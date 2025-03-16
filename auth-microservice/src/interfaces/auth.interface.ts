@@ -7,4 +7,11 @@ interface IUserPayload {
   countryISO: string;
 }
 
-export { IUserPayload };
+interface ITokenPayload {
+  userId: number;
+  username: string;
+  phoneNumber: string;
+  isActive: boolean;
+}
+
+export { IUserPayload, ITokenPayload };

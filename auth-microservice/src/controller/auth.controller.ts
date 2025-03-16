@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
-import { signupSchema } from '../validation/auth.validation';
+import { loginSchema, signupSchema } from '../validation/auth.validation';
 import authLogger from '../libs/logger.libs';
 import { mapZodMessages } from '../mappers/zod.mapper';
 import {
   sendErrorResponse,
   sendSuccessResponse,
 } from '../utils/response.utilts';
-import { signUpUserServices } from '../services/auth.service';
+import { loginService, signUpUserServices } from '../services/auth.service';
 
 async function signUpUser(req: Request, res: Response, next: NextFunction) {
   try {
@@ -28,4 +28,23 @@ async function signUpUser(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export { signUpUser };
+async function loginUser(req: Request, res: Response, next: NextFunction) {
+  try {
+    const content = req.body;
+    const parsePayload = loginSchema.parse(content);
+    const apiResponse = await loginService(parsePayload);
+    const message = `${parsePayload['phoneNumber']} Has Login Successfully as the Users`;
+    return sendSuccessResponse(res, apiResponse, message);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      authLogger.error(
+        `ValidationError: Error while validating the Request Body`,
+      );
+      const mappedError = mapZodMessages(err.issues as unknown as Array<any>);
+      return sendErrorResponse(res, mappedError);
+    }
+    next(err);
+  }
+}
+
+export { signUpUser, loginUser };
