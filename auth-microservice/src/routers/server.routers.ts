@@ -3,8 +3,7 @@ import { Application, Router } from 'express';
 import { handleNotFoundError } from '../utils/error.utils';
 import { errorHandler } from '../middleware/error.middleware';
 import authRouter from './auth.routes';
-import { handleAPIPrefix } from '../middleware/auth.middleware';
-
+import { handleAPIPrefix } from '../middleware/swagger.middleware';
 const serverRouter = (app: Application): void => {
   app.use('/api', [healthRouter, authRouter]);
   app.use(handleAPIPrefix);

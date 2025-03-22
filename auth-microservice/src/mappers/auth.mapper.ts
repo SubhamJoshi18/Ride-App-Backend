@@ -41,6 +41,7 @@ async function createAccessTokenAuthPayload(
 ) {
   const payload = {
     userId: userPayload.id,
+    role: userPayload.role,
     username: userPayload.username,
     phoneNumber: userPayload.phoneNumber,
     isActive: userProfilePayload.isActive,
@@ -58,6 +59,7 @@ async function createRefreshTokenAuthPayload(
 ) {
   const payload = {
     userId: userPayload.id,
+    role: userPayload.role,
     username: userPayload.username,
     phoneNumber: userPayload.phoneNumber,
     isActive: userProfilePayload.isActive,

@@ -1,5 +1,4 @@
 import { Users } from '../database/entities/user.entity';
-import { IUserPayload } from '../interfaces/auth.interface';
 
 async function findDataFromUser<T>(key: string, data: T): Promise<Users> {
   const searchResult = await Users.findOne({
@@ -8,14 +7,6 @@ async function findDataFromUser<T>(key: string, data: T): Promise<Users> {
     },
   });
   return searchResult as Users;
-}
-
-async function createUser(data: IUserPayload): Promise<Users> {
-  const user = Users.create({
-    ...data,
-  });
-  const savedResult = await user.save();
-  return savedResult;
 }
 
 async function innerJoinUserProfile(userId: number) {
@@ -30,4 +21,4 @@ async function innerJoinUserProfile(userId: number) {
   return searchResult;
 }
 
-export { findDataFromUser, createUser, innerJoinUserProfile };
+export { findDataFromUser, innerJoinUserProfile };

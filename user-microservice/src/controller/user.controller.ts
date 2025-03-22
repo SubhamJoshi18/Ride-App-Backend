@@ -16,3 +16,5 @@ async function fetchUserProfile(
     next(err);
   }
 }
+
+export { fetchUserProfile };

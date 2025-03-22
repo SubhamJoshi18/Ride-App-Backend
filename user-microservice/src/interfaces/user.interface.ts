@@ -5,4 +5,15 @@ interface ITokenPayload {
   isActive: boolean;
 }
 
-export { ITokenPayload };
+interface IDecodedPayload {
+  userId: string;
+  role: string;
+  username: string;
+  phoneNumber: string;
+  isActive: boolean;
+  iat: number;
+  exp: number;
+  iss: string;
+}
+
+export { ITokenPayload, IDecodedPayload };
