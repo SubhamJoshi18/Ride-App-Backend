@@ -5,6 +5,7 @@ import serverRouter from './routers/server.routers';
 import SingletonDatabaseConnection from './database/connect';
 import { DataSource } from 'typeorm';
 import { getEnvValue } from './utils/env.utils';
+import swaggerDocs from './swaggers/swaggerConnect';
 
 class StartAuthMicroservice {
   public serverPort: number;
@@ -37,6 +38,8 @@ class StartAuthMicroservice {
             authLogger.info(
               `The Auth Microservice is running on the http://localhost:${this.serverPort}/api`,
             );
+
+            swaggerDocs(this.expressApp, this.serverPort);
           });
         });
       });
