@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from '../constants/http-status.constant';
 import { DatabaseException } from '../exceptions';
-import { IDecodedPayload } from '../interfaces/user.interface';
+import { ICreateRider, IDecodedPayload } from '../interfaces/user.interface';
+import { searchDataFromRider } from '../repository/rider.repository';
 import {
   findDataFromUser,
   innerJoinUserProfile,
@@ -40,4 +41,33 @@ async function fetchUserProfileServices(payload: IDecodedPayload) {
   return userProfileDocs;
 }
 
-export { fetchUserProfileServices };
+async function makeUserRiderServices(payload: ICreateRider) {
+  const { riderName, riderPlateNumber, vechileType } = payload;
+
+  const isRiderNameExists = await searchDataFromRider('riderName', riderName);
+  if (!isRiderNameExists) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `The Rider with ${riderName} has been already Taken, Please Enter a new Rider Name`,
+    );
+  }
+
+  const riderPayload = Object.preventExtensions({
+    riderName,
+    riderPlateNumber:
+      typeof riderPlateNumber === 'string'
+        ? Number(riderPlateNumber)
+        : riderPlateNumber,
+    vechileType,
+  }) as unknown as {
+    riderName: string;
+    riderPlateNumber: number;
+    vechileType: string;
+  };
+
+
+
+  
+}
+
+export { fetchUserProfileServices, makeUserRiderServices };

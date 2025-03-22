@@ -1,6 +1,7 @@
 const MAX_RETRIES = 5;
 const INITIAL_DELAY_MS = 1000;
 const SALT_ROUNDS = 10;
+const BIKE_TYPE = 'bike';
+const CAR_TYPE = 'car';
 
-
-export { MAX_RETRIES, INITIAL_DELAY_MS, SALT_ROUNDS };
+export { MAX_RETRIES, INITIAL_DELAY_MS, SALT_ROUNDS, BIKE_TYPE, CAR_TYPE };

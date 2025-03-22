@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { verifyAuthAccessToken } from '../middleware/auth.middleware';
 import { isUser } from '../middleware/role.middleware';
-import { fetchUserProfile } from '../controller/user.controller';
+import { fetchUserProfile, makeUserRider } from '../controller/user.controller';
 import { isUserActive } from '../middleware/active.middleware';
 
 const userRouter = Router();
@@ -12,6 +12,14 @@ userRouter.get(
   isUser,
   isUserActive,
   fetchUserProfile,
+);
+
+userRouter.post(
+  '/user/rider',
+  verifyAuthAccessToken,
+  isUser,
+  isUserActive,
+  makeUserRider,
 );
 
 export default userRouter;

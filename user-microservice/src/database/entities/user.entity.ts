@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { RIDER_ROLE, USER_ROLE } from '../../constants/roles.constant';
 import { UserProfile } from './userProfile.entity';
+import { Rider } from './rider.entity';
 
 @Entity({
   name: 'Users',
@@ -65,4 +66,7 @@ export class Users extends BaseEntity {
 
   @OneToOne(() => UserProfile, (userProfile) => userProfile.user)
   userProfile!: UserProfile;
+
+  @OneToOne(() => Rider, (rider) => rider.userId)
+  riderId: Rider;
 }

@@ -16,4 +16,15 @@ interface IDecodedPayload {
   iss: string;
 }
 
-export { ITokenPayload, IDecodedPayload };
+enum VechileTypeEnum {
+  BIKE = 'bike',
+  CAR = 'car',
+}
+
+interface ICreateRider {
+  riderName: string;
+  riderPlateNumber: string;
+  vechileType: VechileTypeEnum;
+}
+
+export { ITokenPayload, IDecodedPayload, ICreateRider };
