@@ -19,13 +19,11 @@ async function createRiderConsumer(channel: Channel) {
       try {
         await handleCreateRideMessage(channel, msg);
       } catch (err) {
+        console.log(err)
         authLogger.error(
           `createRideConsumer: Error while handling the Consume Message`,
         );
       } finally {
-        if (channel) {
-          await channel.close();
-        }
         channel.ack(msg);
       }
     });

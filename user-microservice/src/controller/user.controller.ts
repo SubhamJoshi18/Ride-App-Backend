@@ -11,7 +11,7 @@ import { z } from 'zod';
 import userLogger from '../libs/logger.libs';
 import { mapZodMessages } from '../mappers/zod.mapper';
 import { createRiderSchema } from '../validation/user.validation';
-import { ICreateRider } from '../interfaces/user.interface';
+import { ICreateRider, IDecodedPayload } from '../interfaces/user.interface';
 
 async function fetchUserProfile(
   req: Request,
@@ -31,9 +31,11 @@ async function fetchUserProfile(
 async function makeUserRider(req: Request, res: Response, next: NextFunction) {
   try {
     const content = req.body;
+    const userContent = req.user;
     const parsePayload = createRiderSchema.parse(content);
     const apiResponse = await makeUserRiderServices(
       parsePayload as ICreateRider,
+      userContent as IDecodedPayload
     );
     const message = `The Rider has been Created`;
     sendSuccessResponse(res, apiResponse, message);

@@ -1,6 +1,8 @@
 import { HTTP_STATUS } from '../constants/http-status.constant';
 import { DatabaseException } from '../exceptions';
 import { ICreateRider, IDecodedPayload } from '../interfaces/user.interface';
+import MainQueueManager from '../queues/mainQueueManager';
+import { publishCreaterideQueue } from '../queues/publisher/createRiderPublisher';
 import { searchDataFromRider } from '../repository/rider.repository';
 import {
   findDataFromUser,
@@ -41,11 +43,18 @@ async function fetchUserProfileServices(payload: IDecodedPayload) {
   return userProfileDocs;
 }
 
-async function makeUserRiderServices(payload: ICreateRider) {
+async function makeUserRiderServices(
+  payload: ICreateRider,
+  userContent: IDecodedPayload,
+) {
   const { riderName, riderPlateNumber, vechileType } = payload;
+  const { userId } = userContent;
+  const rabbitMQInstances = new MainQueueManager();
+  const channel = await rabbitMQInstances.getChannel();
+  const connection = await rabbitMQInstances.getConnection();
 
   const isRiderNameExists = await searchDataFromRider('riderName', riderName);
-  if (!isRiderNameExists) {
+  if (isRiderNameExists) {
     throw new DatabaseException(
       HTTP_STATUS.DATABASE_ERROR.CODE,
       `The Rider with ${riderName} has been already Taken, Please Enter a new Rider Name`,
@@ -53,6 +62,7 @@ async function makeUserRiderServices(payload: ICreateRider) {
   }
 
   const riderPayload = Object.preventExtensions({
+    userId,
     riderName,
     riderPlateNumber:
       typeof riderPlateNumber === 'string'
@@ -60,13 +70,34 @@ async function makeUserRiderServices(payload: ICreateRider) {
         : riderPlateNumber,
     vechileType,
   }) as unknown as {
+    userId: number;
     riderName: string;
     riderPlateNumber: number;
     vechileType: string;
   };
 
+  const configPayload = Object.seal({
+    channel: channel,
+    connection: connection,
+  });
 
-  
+  const publishToCreateRider = await publishCreaterideQueue(configPayload, {
+    riderPlateNumber: riderPayload.riderPlateNumber.toString(),
+    ...riderPayload,
+  } as any);
+
+  const responseMappedobj = {};
+  const isValidSendedPayload =
+    typeof publishToCreateRider === 'boolean' && publishToCreateRider;
+  if (isValidSendedPayload) {
+    responseMappedobj['Success'] = true;
+  } else {
+    responseMappedobj['Failed'] = true;
+  }
+
+  return {
+    message: `${'Success' in responseMappedobj ? 'The Rider is being  Created, Will send the Notification After the Analyzing the Rider Information, Thank you!' : 'There have been issue while creating to the Rider'}`,
+  };
 }
 
 export { fetchUserProfileServices, makeUserRiderServices };

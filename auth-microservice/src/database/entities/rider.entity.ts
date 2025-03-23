@@ -42,4 +42,6 @@ export class Rider extends BaseEntity {
   @OneToOne(() => Users, (user) => user.rider)
   @JoinColumn()
   user: Users;
+
+
 }

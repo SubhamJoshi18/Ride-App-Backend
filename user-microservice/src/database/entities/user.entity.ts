@@ -67,6 +67,6 @@ export class Users extends BaseEntity {
   @OneToOne(() => UserProfile, (userProfile) => userProfile.user)
   userProfile!: UserProfile;
 
-  @OneToOne(() => Rider, (rider) => rider.userId)
-  riderId: Rider;
+  @OneToOne(() => Rider, (rider) => rider.user)
+  rider: Rider;
 }
