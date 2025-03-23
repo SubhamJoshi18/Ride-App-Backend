@@ -1,6 +1,10 @@
 import { HTTP_STATUS } from '../constants/http-status.constant';
 import { DatabaseException } from '../exceptions';
-import { ICreateRider, IDecodedPayload } from '../interfaces/user.interface';
+import {
+  ICreateRider,
+  IDecodedPayload,
+  IUpdateUserProfile,
+} from '../interfaces/user.interface';
 import MainQueueManager from '../queues/mainQueueManager';
 import { publishCreaterideQueue } from '../queues/publisher/createRiderPublisher';
 import { searchDataFromRider } from '../repository/rider.repository';
@@ -8,6 +12,10 @@ import {
   findDataFromUser,
   innerJoinUserProfile,
 } from '../repository/user.repository';
+import {
+  findUserProfileBasedOnUserId,
+  updateUserProfile,
+} from '../repository/userProfile.repository';
 
 async function fetchUserProfileServices(payload: IDecodedPayload) {
   const { userId } = payload;
@@ -100,4 +108,57 @@ async function makeUserRiderServices(
   };
 }
 
-export { fetchUserProfileServices, makeUserRiderServices };
+async function updateUserProfileServices(
+  userContent: IDecodedPayload,
+  userProfilePayload: IUpdateUserProfile,
+) {
+  const { userId } = userContent;
+
+  const userData = await findDataFromUser('id', userId);
+
+  if (!userContent) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `The User Does not Exists on the System`,
+    );
+  }
+
+  const userid = userData.hasId() ? userData.id : null;
+
+  const isMatchUserId = userid.toString() === userId;
+
+  if (typeof isMatchUserId === 'boolean' && !isMatchUserId) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `
+      The User Id Does not Match with the Saved User`,
+    );
+  }
+
+  const isProfileExists = await findUserProfileBasedOnUserId(userData);
+
+  if (typeof isProfileExists === null || undefined) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `
+      The User  Does not have the Profile Associated With it `,
+    );
+  }
+
+  const userProfileId = isProfileExists.hasId() ? isProfileExists.id : null;
+
+  const status = await updateUserProfile(
+    JSON.parse(JSON.stringify(userProfilePayload)),
+    userProfileId,
+  );
+
+  return {
+    updatedStatus: status,
+  };
+}
+
+export {
+  fetchUserProfileServices,
+  makeUserRiderServices,
+  updateUserProfileServices,
+};

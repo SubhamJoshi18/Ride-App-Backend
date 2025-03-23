@@ -1,5 +1,6 @@
 import { Users } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/userProfile.entity';
+import { IUpdateUserProfile } from '../interfaces/user.interface';
 import { findDataFromUser } from './user.repository';
 
 async function createUserProfileBasedOnUserId(
@@ -15,4 +16,33 @@ async function createUserProfileBasedOnUserId(
   return savedProfileResult;
 }
 
-export { createUserProfileBasedOnUserId };
+async function findUserProfileBasedOnUserId(user: Users): Promise<UserProfile> {
+  const searchResult = await UserProfile.findOne({
+    where: {
+      user: user,
+    },
+  });
+  return searchResult;
+}
+
+async function updateUserProfile(
+  payload: IUpdateUserProfile,
+  userProfileId: number,
+) {
+  const updatedResult = await UserProfile.update(
+    {
+      id: userProfileId,
+    },
+    {
+      ...payload,
+    },
+  );
+
+  return updatedResult.affected > 0;
+}
+
+export {
+  createUserProfileBasedOnUserId,
+  findUserProfileBasedOnUserId,
+  updateUserProfile,
+};

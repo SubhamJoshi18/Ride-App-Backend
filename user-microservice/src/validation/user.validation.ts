@@ -16,4 +16,18 @@ const createRiderSchema = z.object({
     .max(20, 'Vechile Type must be at most 20 characters long'),
 });
 
-export { createRiderSchema };
+const updateUserProfileSchema = z.object({
+  uniqueName: z
+    .string()
+    .min(3, 'Unique Name must be at least 3 characters long')
+    .max(20, 'Unique Names must be at most 20 characters long')
+    .optional(),
+
+  bio: z
+    .string()
+    .min(3, ' Bio must be at least 3 characters long')
+    .max(200, 'Unique Names must be at most 20 characters long')
+    .optional(),
+});
+
+export { createRiderSchema, updateUserProfileSchema };

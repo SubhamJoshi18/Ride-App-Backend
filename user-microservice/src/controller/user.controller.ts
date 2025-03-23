@@ -2,15 +2,19 @@ import { NextFunction, Request, Response } from 'express';
 import {
   fetchUserProfileServices,
   makeUserRiderServices,
+  updateUserProfileServices,
 } from '../services/user.service';
 import {
   sendErrorResponse,
   sendSuccessResponse,
 } from '../utils/response.utilts';
-import { z } from 'zod';
+import { map, z } from 'zod';
 import userLogger from '../libs/logger.libs';
 import { mapZodMessages } from '../mappers/zod.mapper';
-import { createRiderSchema } from '../validation/user.validation';
+import {
+  createRiderSchema,
+  updateUserProfileSchema,
+} from '../validation/user.validation';
 import { ICreateRider, IDecodedPayload } from '../interfaces/user.interface';
 
 async function fetchUserProfile(
@@ -35,7 +39,7 @@ async function makeUserRider(req: Request, res: Response, next: NextFunction) {
     const parsePayload = createRiderSchema.parse(content);
     const apiResponse = await makeUserRiderServices(
       parsePayload as ICreateRider,
-      userContent as IDecodedPayload
+      userContent as IDecodedPayload,
     );
     const message = `The Rider has been Created`;
     sendSuccessResponse(res, apiResponse, message);
@@ -51,4 +55,31 @@ async function makeUserRider(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export { fetchUserProfile, makeUserRider };
+async function updateUserProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const userContent = req.user;
+    const content = req.body;
+    const parseContent = await updateUserProfileSchema.parse(content);
+    const apiResponse = await updateUserProfileServices(
+      userContent,
+      parseContent,
+    );
+    const contentMessage = `The User Profile has been Updated`;
+    sendSuccessResponse(res, apiResponse, contentMessage);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      userLogger.error(
+        `ValidationError: Error while validating the Request Body`,
+      );
+      const mappedError = mapZodMessages(err.issues as unknown as Array<any>);
+      sendErrorResponse(res, mappedError);
+    }
+    next(err);
+  }
+}
+
+export { fetchUserProfile, makeUserRider, updateUserProfile };

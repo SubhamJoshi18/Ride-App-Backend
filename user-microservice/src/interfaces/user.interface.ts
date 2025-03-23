@@ -27,4 +27,9 @@ interface ICreateRider {
   vechileType: VechileTypeEnum;
 }
 
-export { ITokenPayload, IDecodedPayload, ICreateRider };
+interface IUpdateUserProfile {
+  uniqueName?: string;
+  bio?: string;
+}
+
+export { ITokenPayload, IDecodedPayload, ICreateRider, IUpdateUserProfile };
