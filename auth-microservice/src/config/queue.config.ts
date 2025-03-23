@@ -6,4 +6,10 @@ const createRiderConfig = Object.preventExtensions({
   queueRoutingKey: 'user-microservice-routingKey',
 }) as IGenericQueueConfig;
 
-export { createRiderConfig };
+const confidentallyUpdateQueue = {
+  queueName: 'user-microservice:confidentally-update',
+  queueExchange: 'user-microservice-update-exchange',
+  queueRoutingKey: 'user-microservice-update-routingKey',
+} as IGenericQueueConfig;
+
+export { createRiderConfig, confidentallyUpdateQueue };

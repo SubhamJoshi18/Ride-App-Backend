@@ -41,8 +41,36 @@ async function updateUserProfile(
   return updatedResult.affected > 0;
 }
 
+async function deactivateUserAccount(userProfileId: number) {
+  const updatedResult = await UserProfile.update(
+    {
+      id: userProfileId,
+    },
+    {
+      isActive: false,
+    },
+  );
+
+  return updatedResult.affected > 0;
+}
+
+async function activateUserAccount(userProfileId: number) {
+  const updatedResult = await UserProfile.update(
+    {
+      id: userProfileId,
+    },
+    {
+      isActive: true,
+    },
+  );
+
+  return updatedResult.affected > 0;
+}
+
 export {
   createUserProfileBasedOnUserId,
   findUserProfileBasedOnUserId,
   updateUserProfile,
+  deactivateUserAccount,
+  activateUserAccount,
 };

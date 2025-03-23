@@ -13,4 +13,10 @@ interface IIncludeId extends ICreateRider {
   userId: number;
 }
 
-export { VechileTypeEnum, ICreateRider, IIncludeId };
+interface IConfidentallyUpdate {
+  phoneNumber?: string;
+  accountStatus?: boolean;
+  userId: number;
+}
+
+export { VechileTypeEnum, ICreateRider, IIncludeId, IConfidentallyUpdate };

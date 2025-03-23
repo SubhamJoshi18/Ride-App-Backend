@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import {
+  changeTheUserProfileService,
   fetchUserProfileServices,
   makeUserRiderServices,
   updateUserProfileServices,
@@ -82,4 +83,28 @@ async function updateUserProfile(
   }
 }
 
-export { fetchUserProfile, makeUserRider, updateUserProfile };
+async function changeTheUserStatus(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const queryOptions = req.query;
+    const userData = req.user;
+    const apiResponse = await changeTheUserProfileService(
+      userData,
+      queryOptions,
+    );
+    const contentMessage = `The Account has been Deactivated`;
+    sendSuccessResponse(res, apiResponse, contentMessage);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export {
+  fetchUserProfile,
+  makeUserRider,
+  updateUserProfile,
+  changeTheUserStatus,
+};

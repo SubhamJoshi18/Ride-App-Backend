@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { verifyAuthAccessToken } from '../middleware/auth.middleware';
 import { isUser } from '../middleware/role.middleware';
 import { isUserActive } from '../middleware/active.middleware';
-import { updateUserProfile } from '../controller/user.controller';
+import { changeTheUserStatus, updateUserProfile } from '../controller/user.controller';
 
 const userProfileRouter = Router();
 
@@ -12,6 +12,14 @@ userProfileRouter.patch(
   isUser,
   isUserActive,
   updateUserProfile,
+);
+
+userProfileRouter.patch(
+  '/user/profile/account',
+  verifyAuthAccessToken,
+  isUser,
+  isUserActive,
+  changeTheUserStatus,
 );
 
 export default userProfileRouter;

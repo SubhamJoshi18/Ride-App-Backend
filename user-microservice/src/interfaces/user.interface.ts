@@ -32,4 +32,15 @@ interface IUpdateUserProfile {
   bio?: string;
 }
 
-export { ITokenPayload, IDecodedPayload, ICreateRider, IUpdateUserProfile };
+interface IConfidentallyUpdate {
+  accountStatus?: boolean;
+  phoneNumber: string;
+}
+
+export {
+  ITokenPayload,
+  IDecodedPayload,
+  ICreateRider,
+  IUpdateUserProfile,
+  IConfidentallyUpdate,
+};

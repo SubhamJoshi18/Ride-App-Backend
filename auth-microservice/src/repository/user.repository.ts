@@ -1,6 +1,12 @@
+import { number } from 'zod';
+import {
+  ACTIVATED_MODULE,
+  DEACTIVATED_MODULE,
+} from '../constants/modules.constant';
 import { Rider } from '../database/entities/rider.entity';
 import { Users } from '../database/entities/user.entity';
 import { IUserPayload } from '../interfaces/auth.interface';
+import { IConfidentallyUpdate } from '../interfaces/rider.interface';
 
 async function findDataFromUser<T>(key: string, data: T): Promise<Users> {
   const searchResult = await Users.findOne({
@@ -50,10 +56,47 @@ async function createRiderBasedOnUserId(
   return savedProfileResult;
 }
 
+async function updateTheUserStatus(
+  userId: number,
+  parseContent: IConfidentallyUpdate,
+) {
+  let parseKey = '';
+  const isValidContent = Object.keys(parseContent).includes(DEACTIVATED_MODULE);
+  if (isValidContent) {
+    parseKey += DEACTIVATED_MODULE;
+  } else {
+    parseKey += ACTIVATED_MODULE;
+  }
+
+  const updatedResult = await Users.update(
+    {
+      id: userId,
+    },
+    {
+      status: parseKey,
+    },
+  );
+  return updatedResult.affected > 0;
+}
+
+async function updatePhoneNumber(userId: number, phoneNumber: string) {
+  const updatedResult = await Users.update(
+    {
+      id: userId,
+    },
+    {
+      phoneNumber: phoneNumber,
+    },
+  );
+  return updatedResult.affected > 0;
+}
+
 export {
   findDataFromUser,
   createUser,
   innerJoinUserProfile,
   innerJoinRider,
   createRiderBasedOnUserId,
+  updateTheUserStatus,
+  updatePhoneNumber
 };

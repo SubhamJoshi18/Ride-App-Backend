@@ -1,18 +1,27 @@
+import { Interface } from 'readline';
 import { HTTP_STATUS } from '../constants/http-status.constant';
-import { DatabaseException } from '../exceptions';
 import {
+  ACTIVATED_MODULE,
+  DEACTIVATED_MODULE,
+} from '../constants/modules.constant';
+import { DatabaseException, ValidationException } from '../exceptions';
+import {
+  IConfidentallyUpdate,
   ICreateRider,
   IDecodedPayload,
   IUpdateUserProfile,
 } from '../interfaces/user.interface';
 import MainQueueManager from '../queues/mainQueueManager';
 import { publishCreaterideQueue } from '../queues/publisher/createRiderPublisher';
+import { publishConfidentallyUpdateQueue } from '../queues/publisher/updateConfidentallyQueue';
 import { searchDataFromRider } from '../repository/rider.repository';
 import {
   findDataFromUser,
   innerJoinUserProfile,
 } from '../repository/user.repository';
 import {
+  activateUserAccount,
+  deactivateUserAccount,
   findUserProfileBasedOnUserId,
   updateUserProfile,
 } from '../repository/userProfile.repository';
@@ -157,8 +166,123 @@ async function updateUserProfileServices(
   };
 }
 
+async function changeTheUserProfileService(
+  userContent: IDecodedPayload,
+  queryParams: object,
+) {
+  const { userId } = userContent;
+
+  const isValidDeactivatedParams =
+    queryParams.hasOwnProperty(DEACTIVATED_MODULE) &&
+    Object.keys(queryParams).includes(DEACTIVATED_MODULE);
+
+  const isValidActivatedParams =
+    queryParams.hasOwnProperty(ACTIVATED_MODULE) &&
+    Object.keys(queryParams).includes(ACTIVATED_MODULE);
+
+  if (
+    typeof isValidDeactivatedParams === 'boolean' &&
+    queryParams[DEACTIVATED_MODULE] &&
+    !isValidDeactivatedParams
+  )
+    throw new ValidationException(
+      HTTP_STATUS.VALIDATION_ERROR.CODE,
+      `The Query Parameter (deactivated) is Missing, Please Issued the Correct Properties`,
+    );
+
+  if (
+    typeof isValidActivatedParams === 'boolean' &&
+    queryParams[ACTIVATED_MODULE] &&
+    !isValidActivatedParams
+  ) {
+    throw new ValidationException(
+      HTTP_STATUS.VALIDATION_ERROR.CODE,
+      `The Query Parameter (activated) is Missing, Please Issued the Correct Properties`,
+    );
+  }
+
+  const userData = await findDataFromUser('id', userId);
+
+  if (!userContent) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `The User Does not Exists on the System`,
+    );
+  }
+
+  const userid = userData.hasId() ? userData.id : null;
+
+  const isMatchUserId = userid.toString() === userId;
+
+  if (typeof isMatchUserId === 'boolean' && !isMatchUserId) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `
+      The User Id Does not Match with the Saved User`,
+    );
+  }
+
+  const isProfileExists = await findUserProfileBasedOnUserId(userData);
+
+  if (typeof isProfileExists === null || undefined) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `
+      The User  Does not have the Profile Associated With it `,
+    );
+  }
+
+  const isAlreadyDeactivated =
+    isProfileExists.hasId() && isProfileExists.isActive
+      ? isProfileExists.isActive
+      : null;
+
+  if (!isAlreadyDeactivated)
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `The Account is Already Deactivated, The Following Account be Deactivated`,
+    );
+
+  const userProfileId = isProfileExists.hasId() ? isProfileExists.id : null;
+
+  let accountStatus: boolean;
+
+  switch (true) {
+    case !!DEACTIVATED_MODULE &&
+      Object.keys(queryParams).includes(DEACTIVATED_MODULE): {
+      accountStatus = await deactivateUserAccount(userProfileId);
+    }
+
+    case !!ACTIVATED_MODULE &&
+      Object.keys(queryParams).includes(ACTIVATED_MODULE): {
+      accountStatus = await activateUserAccount(userProfileId);
+    }
+  }
+
+  const payload = {
+    userId: userid,
+    accountStatus: !!DEACTIVATED_MODULE ? false : true,
+  } as unknown as IConfidentallyUpdate;
+
+  const rabbitMQInstances = new MainQueueManager();
+  const getChannel = await rabbitMQInstances.getChannel();
+  const connection = await rabbitMQInstances.getConnection();
+
+  const configPayload = {
+    channel: getChannel,
+    connection,
+  };
+
+  await publishConfidentallyUpdateQueue(configPayload, payload);
+  return {
+    updatedStatus: accountStatus,
+    message: `The Account has been Deactivated at : ${new Date().toDateString()}`,
+  };
+}
+
 export {
   fetchUserProfileServices,
   makeUserRiderServices,
   updateUserProfileServices,
+  changeTheUserProfileService,
 };

@@ -4,4 +4,10 @@ const createRiderConfig = {
   queueRoutingKey: 'user-microservice-routingKey',
 };
 
-export { createRiderConfig };
+const confidentallyUpdateQueue = {
+  queueName: 'user-microservice:confidentally-update',
+  queueExchange: 'user-microservice-update-exchange',
+  queueRoutingKey: 'user-microservice-update-routingKey',
+};
+
+export { createRiderConfig, confidentallyUpdateQueue };
