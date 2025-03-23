@@ -66,7 +66,6 @@ async function makeUserRiderServices(payload: ICreateRider) {
   };
 
 
-
   
 }
 

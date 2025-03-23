@@ -75,3 +75,14 @@ export class DatabaseException extends HttpExceptions {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
+
+export class RabbitMQExceptions extends HttpExceptions {
+  constructor(statusCode: number | null, message: string) {
+    super(
+      statusCode ?? HTTP_STATUS.DATABASE_ERROR.CODE,
+      message || HTTP_STATUS.DATABASE_ERROR.MESSAGE,
+    );
+    this.name = 'RabbitMQExceptions';
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
