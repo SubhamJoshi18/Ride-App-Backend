@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -10,7 +11,7 @@ import { Rides } from './rides.entity';
 @Entity({
   name: 'Rides-MetaData',
 })
-export class RideMetadata {
+export class RideMetadata extends BaseEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
   })

@@ -18,5 +18,5 @@ function createLogger(service: string): winston.Logger {
   });
 }
 
-const userLogger = createLogger('user-microservice');
-export default userLogger;
+const riderLogger = createLogger('rider-microservice');
+export default riderLogger;

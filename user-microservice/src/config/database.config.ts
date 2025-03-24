@@ -4,6 +4,8 @@ import path from 'path';
 import { Users } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/userProfile.entity';
 import { Rider } from '../database/entities/rider.entity';
+import { Rides } from '../database/entities/rides.entity';
+import { RideMetadata } from '../database/entities/rides.metaData.entity';
 
 function getDatabaseConfig(): DataSourceOptions {
   return {
@@ -13,7 +15,7 @@ function getDatabaseConfig(): DataSourceOptions {
     username: getEnvValue('DB_USERNAME'),
     password: getEnvValue('DB_PASSWORD'),
     database: getEnvValue('DB_NAME'),
-    entities: [Users, UserProfile, Rider],
+    entities: [Users, UserProfile, Rider, Rides, RideMetadata],
     synchronize: true,
     logging: false,
   };

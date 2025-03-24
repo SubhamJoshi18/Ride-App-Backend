@@ -1,9 +1,9 @@
-import authLogger from './libs/logger.libs';
 import express, { Application } from 'express';
 import { getEnvValue } from './utils/env.utils';
 import { handleUnexpectedError } from './utils/error.utils';
 import { MAX_RETRIES, INITIAL_DELAY_MS } from './constants/modules.constant';
 import StartRiderMicroservice from './server';
+import riderLogger from './libs/logger.libs';
 
 async function startMicroservice(retries = 0) {
   try {
@@ -22,13 +22,13 @@ async function startMicroservice(retries = 0) {
 
     await authMicroserviceInstance.listenServer();
 
-    authLogger.info(`Rider microservice started on port ${port}`);
+    riderLogger.info(`Rider microservice started on port ${port}`);
   } catch (err) {
-    authLogger.error(`Rider Microservice startup failed: ${err}`);
+    riderLogger.error(`Rider Microservice startup failed: ${err}`);
 
     if (retries < MAX_RETRIES) {
       const delay = INITIAL_DELAY_MS * 2 ** retries;
-      authLogger.error(
+      riderLogger.error(
         `Retrying (${retries + 1}/${MAX_RETRIES}) in ${delay}ms...`,
       );
 
@@ -36,7 +36,7 @@ async function startMicroservice(retries = 0) {
       return startMicroservice(retries + 1);
     }
 
-    authLogger.error('Maximum retries reached. Exiting process.');
+    riderLogger.error('Maximum retries reached. Exiting process.');
     process.exit(1);
   }
 }

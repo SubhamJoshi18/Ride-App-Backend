@@ -7,6 +7,7 @@ import { Rider } from '../database/entities/rider.entity';
 import { Users } from '../database/entities/user.entity';
 import { IUserPayload } from '../interfaces/auth.interface';
 import { IConfidentallyUpdate } from '../interfaces/rider.interface';
+import { RIDER_ROLE } from '../constants/roles.constant';
 
 async function findDataFromUser<T>(key: string, data: T): Promise<Users> {
   const searchResult = await Users.findOne({
@@ -51,7 +52,9 @@ async function createRiderBasedOnUserId(
   riderPayload: Rider,
 ): Promise<Rider> {
   const userDocs = (await findDataFromUser('id', userId)) as Users;
+  userDocs.role = RIDER_ROLE;
   riderPayload.user = userDocs;
+  await userDocs.save();
   const savedProfileResult = await riderPayload.save();
   return savedProfileResult;
 }

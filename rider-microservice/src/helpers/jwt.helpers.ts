@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { ITokenPayload } from '../interfaces/user.interface';
+import { ITokenPayload } from '../interfaces/token.interface';
 import { getEnvValue } from '../utils/env.utils';
 
 async function createAccessToken(payload: ITokenPayload) {

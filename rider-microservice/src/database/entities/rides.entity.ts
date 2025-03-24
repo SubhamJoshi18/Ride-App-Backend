@@ -44,22 +44,32 @@ export class Rides extends BaseEntity {
 
   @Column({
     type: 'simple-enum',
-    enum: [START_RIDE_MODULE, COMPLETED_RIDE_MODULE, CANCEL_MODULE],
-    default: IDLE_MODULE,
+    enum: [
+      IDLE_MODULE,
+      START_RIDE_MODULE,
+      COMPLETED_RIDE_MODULE,
+      CANCEL_MODULE,
+    ],
   })
   rideStatus: string;
 
-  @CreateDateColumn({ type: 'timestamp', nullable: false })
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
   rideStartedAt: Date;
+
+  @CreateDateColumn({ type: 'timestamp', nullable: false })
+  rideCreatedAt: Date;
 
   @ManyToOne(() => Users, (user) => user.rides)
   @JoinColumn()
   user: Users;
 
-  @ManyToOne(() => Rider, (rider) => rider.rides)
+  @ManyToOne(() => Rider, (rider) => rider.rides, { nullable: true })
   @JoinColumn()
   rider: Rider;
 
-  @OneToOne(() => RideMetadata,(rideMetadata) => rideMetadata.rides)
-  ridesMetadata : RideMetadata
+  @OneToOne(() => RideMetadata, (rideMetadata) => rideMetadata.rides)
+  ridesMetadata: RideMetadata;
 }

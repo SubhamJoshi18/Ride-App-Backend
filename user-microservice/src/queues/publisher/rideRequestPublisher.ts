@@ -1,23 +1,16 @@
-import amqplib, { Channel, ChannelModel, Connection } from 'amqplib';
-import {
-  confidentallyUpdateQueue,
-  createRiderConfig,
-} from '../../config/queue.config';
-import {
-  IConfidentallyUpdate,
-  ICreateRider,
-} from '../../interfaces/user.interface';
+import { Channel, ChannelModel, Connection } from 'amqplib';
+import { userRideRequestQueue } from '../../config/queue.config';
+import { IConfidentallyUpdate } from '../../interfaces/user.interface';
 import { DIRECT_EXCHANGE_TYPE } from '../../constants/modules.constant';
 import userLogger from '../../libs/logger.libs';
-import { resolve } from 'path';
+import { IQueueCreateRidePayload } from '../../interfaces/rider.interface';
 
-async function publishConfidentallyUpdateQueue(
+async function publishRideRequestQueue(
   configPayload: { channel: Channel; connection: ChannelModel },
-  payload: IConfidentallyUpdate,
+  payload: IQueueCreateRidePayload,
 ) {
   const { channel, connection } = configPayload;
-  const { queueName, queueExchange, queueRoutingKey } =
-    confidentallyUpdateQueue;
+  const { queueName, queueExchange, queueRoutingKey } = userRideRequestQueue;
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -34,11 +27,11 @@ async function publishConfidentallyUpdateQueue(
       channel.publish(queueExchange, queueRoutingKey, payloadQueue);
 
       userLogger.info(
-        `user-microservice: Payload  : ${JSON.stringify(payloadQueue)} is Published to the ${queueName}`,
+        `rider-microservice: Payload  : ${JSON.stringify(payloadQueue)} is Published to the ${queueName}`,
       );
       resolve(true);
     } catch (err) {
-      throw err;
+      reject(err);
     } finally {
       if (channel && connection) {
         await channel.close();
@@ -47,4 +40,4 @@ async function publishConfidentallyUpdateQueue(
   });
 }
 
-export { publishConfidentallyUpdateQueue };
+export { publishRideRequestQueue };
