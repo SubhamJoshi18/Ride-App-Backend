@@ -28,7 +28,7 @@ async function startMicroservice(retries = 0) {
 
     if (retries < MAX_RETRIES) {
       const delay = INITIAL_DELAY_MS * 2 ** retries;
-      authLogger.warn(
+      authLogger.error(
         `Retrying (${retries + 1}/${MAX_RETRIES}) in ${delay}ms...`,
       );
 

@@ -18,7 +18,7 @@ class MainQueueManager {
     } catch (err) {
       if (retries < MAX_RETRIES) {
         const delay = INITIAL_DELAY_MS * 2 ** retries;
-        userLogger.warn(`
+        userLogger.error(`
             Retrying  (${retries + 1}/${MAX_RETRIES}) in ${delay}ms...`);
 
         await new Promise((resolve) => setTimeout(resolve, delay));

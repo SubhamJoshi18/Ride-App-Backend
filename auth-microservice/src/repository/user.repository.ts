@@ -61,8 +61,13 @@ async function updateTheUserStatus(
   parseContent: IConfidentallyUpdate,
 ) {
   let parseKey = '';
-  const isValidContent = Object.keys(parseContent).includes(DEACTIVATED_MODULE);
-  if (isValidContent) {
+  const isValidContent =
+    typeof parseContent['accountStatus'] === 'boolean' &&
+    parseContent['accountStatus']
+      ? true
+      : false;
+
+  if (!isValidContent) {
     parseKey += DEACTIVATED_MODULE;
   } else {
     parseKey += ACTIVATED_MODULE;
@@ -98,5 +103,5 @@ export {
   innerJoinRider,
   createRiderBasedOnUserId,
   updateTheUserStatus,
-  updatePhoneNumber
+  updatePhoneNumber,
 };

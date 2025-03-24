@@ -32,7 +32,7 @@ async function handleConfidentallyUpdate(
       );
     }
     const parseContent = JSON.parse(content.toString()) as IConfidentallyUpdate;
-
+    console.log(`This is the parse content`, parseContent);
     authLogger.info(
       `Auth-microservice: The Auth Microservice has received the payload : ${JSON.stringify(parseContent)} From the User-Microservice`,
     );
@@ -56,6 +56,7 @@ async function handleConfidentallyUpdate(
         authLogger.info(
           `confidentallyUpdateConsumer: The User Status has been Changed`,
         );
+        break;
       }
 
       case PHONE_NUMBER_MODULE: {
@@ -63,6 +64,7 @@ async function handleConfidentallyUpdate(
         authLogger.info(
           'confidentallyUpdateConsumer: The User Has Updated the Phone Number',
         );
+        break;
       }
     }
   } catch (err) {
