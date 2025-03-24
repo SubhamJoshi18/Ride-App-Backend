@@ -18,11 +18,7 @@ import {
   createRiderSchema,
   updateUserProfileSchema,
 } from '../validation/user.validation';
-import {
-  IChangePhoneNumber,
-  ICreateRider,
-  IDecodedPayload,
-} from '../interfaces/user.interface';
+import { IChangePhoneNumber, ICreateRider, IDecodedPayload } from '../interfaces/user.interface';
 
 async function fetchUserProfile(
   req: Request,
