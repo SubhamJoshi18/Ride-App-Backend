@@ -6,6 +6,7 @@ import {
 } from '../constants/modules.constant';
 import { DatabaseException, ValidationException } from '../exceptions';
 import {
+  IChangePhoneNumber,
   IConfidentallyUpdate,
   ICreateRider,
   IDecodedPayload,
@@ -280,9 +281,72 @@ async function changeTheUserProfileService(
   };
 }
 
+async function changeThePhoneNumberServices(
+  userContent: IDecodedPayload,
+  payload: IChangePhoneNumber,
+) {
+  const { userId } = userContent;
+
+  const userData = await findDataFromUser('id', userId);
+
+  if (!userContent) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `The User Does not Exists on the System`,
+    );
+  }
+
+  const userid = userData.hasId() ? userData.id : null;
+
+  const isMatchUserId = userid.toString() === userId;
+
+  if (typeof isMatchUserId === 'boolean' && !isMatchUserId) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `
+      The User Id Does not Match with the Saved User`,
+    );
+  }
+
+  const isProfileExists = await findUserProfileBasedOnUserId(userData);
+
+  if (typeof isProfileExists === null || undefined) {
+    throw new DatabaseException(
+      HTTP_STATUS.DATABASE_ERROR.CODE,
+      `
+      The User  Does not have the Profile Associated With it `,
+    );
+  }
+
+  const userProfileId = isProfileExists.hasId() ? isProfileExists.id : null;
+  const newPhoneNumber =
+    userProfileId && userData['phoneNumber'] ? payload.phoneNumber : null;
+
+  const queuePayload = {
+    userId: userid,
+    phoneNumber: newPhoneNumber,
+  };
+
+  const rabbitMQInstances = new MainQueueManager();
+  const getChannel = await rabbitMQInstances.getChannel();
+  const connection = await rabbitMQInstances.getConnection();
+
+  const configPayload = {
+    channel: getChannel,
+    connection,
+  };
+
+  await publishConfidentallyUpdateQueue(configPayload, queuePayload);
+  return {
+    updatedStatus: true,
+    message: `The Account Phone Number has been Changed at : ${new Date().toDateString()}`,
+  };
+}
+
 export {
   fetchUserProfileServices,
   makeUserRiderServices,
   updateUserProfileServices,
   changeTheUserProfileService,
+  changeThePhoneNumberServices,
 };

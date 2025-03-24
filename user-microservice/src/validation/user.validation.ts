@@ -30,4 +30,11 @@ const updateUserProfileSchema = z.object({
     .optional(),
 });
 
-export { createRiderSchema, updateUserProfileSchema };
+const changePhoneNumberSchema = z.object({
+  phoneNumber: z
+    .string()
+    .min(10, 'Phone number must be at least 10 digits long')
+    .max(15, 'Phone number must be at most 15 digits long'),
+});
+
+export { createRiderSchema, updateUserProfileSchema, changePhoneNumberSchema };

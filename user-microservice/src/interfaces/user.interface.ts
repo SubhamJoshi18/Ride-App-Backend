@@ -37,10 +37,15 @@ interface IConfidentallyUpdate {
   phoneNumber: string;
 }
 
+interface IChangePhoneNumber {
+  phoneNumber: string;
+}
+
 export {
   ITokenPayload,
   IDecodedPayload,
   ICreateRider,
   IUpdateUserProfile,
   IConfidentallyUpdate,
+  IChangePhoneNumber,
 };
