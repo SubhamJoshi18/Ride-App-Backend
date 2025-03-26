@@ -1,6 +1,20 @@
 const MAX_RETRIES = 5;
 const INITIAL_DELAY_MS = 1000;
 const SALT_ROUNDS = 10;
+const DIRECT_EXCHANGE_TYPE = 'direct';
+const BIKE_TYPE = 'bike';
+const CAR_TYPE = 'car';
+const DEACTIVATED_MODULE = 'deactivate';
+const ACTIVATED_MODULE = 'activate';
 
 
-export { MAX_RETRIES, INITIAL_DELAY_MS, SALT_ROUNDS };
+export {
+  MAX_RETRIES,
+  INITIAL_DELAY_MS,
+  SALT_ROUNDS,
+  DIRECT_EXCHANGE_TYPE,
+  BIKE_TYPE,
+  CAR_TYPE,
+  DEACTIVATED_MODULE,
+  ACTIVATED_MODULE,
+};
